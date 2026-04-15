@@ -275,9 +275,10 @@ nav.scrolled {
     text-align: center;
     position: relative;
     overflow: hidden;
+    /* Niche gradient aur photo ka link hai */
     background:
-        linear-gradient(rgba(20,20,20,0.55), rgba(20,20,20,0.85), var(--bg)),
-        url('images/hero-bg.jpg') center/cover no-repeat;
+        linear-gradient(to bottom, rgba(26,26,26,0.4) 0%, rgba(26,26,26,0.85) 70%, var(--bg) 100%),
+        url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776269831/IMG_25523_ej3vlb.jpg') center 20%/cover no-repeat;
 }
 
 /* Parallax background handled by JS via CSS variable */
@@ -307,6 +308,36 @@ nav.scrolled {
 .hero-content {
     position: relative;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 👈 Yeh sabko wapas center me layega */
+    width: 100%;
+}
+
+/* ━━ Hero Image Logo Styles ━━ */
+#hero-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px; 
+    margin: 0 auto 2rem auto;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+}
+
+#hero-logo-container.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition: opacity 1.1s var(--ease-out) 0.1s, transform 1.1s var(--ease-out) 0.1s;
+}
+
+#hero-logo {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 15px rgba(255, 69, 0, 0.15));
 }
 
 .hero-eyebrow {
@@ -367,7 +398,7 @@ nav.scrolled {
 
 .cta-group {
     display: flex;
-    justify-content: center;
+    justify-content: center; /* 👈 Yeh typo fix ho gayi */
     flex-wrap: wrap;
     gap: 1rem;
     opacity: 0;
@@ -719,7 +750,7 @@ nav.scrolled {
 }
 
 /* ============================================================
-   DRAGGABLE MARQUEE
+   DRAGGABLE MARQUEE & POSTERS
    ============================================================ */
 .marquee-wrapper {
     width: 100%;
@@ -727,12 +758,13 @@ nav.scrolled {
     position: relative;
     padding: 1rem 0;
 }
+/* Strong fades on the sides for movie theater depth */
 .marquee-wrapper::before,
 .marquee-wrapper::after {
     content: '';
     position: absolute;
     top: 0;
-    width: 120px;
+    width: 15%; /* increase fade area */
     height: 100%;
     z-index: 2;
     pointer-events: none;
@@ -742,48 +774,107 @@ nav.scrolled {
 
 .marquee-track {
     display: flex;
-    gap: 1.2rem;
-    padding: 1rem 2rem;
+    gap: 1rem; /* tight gap for posters */
+    padding: 2rem 2rem;
     overflow-x: auto;
-    scroll-behavior: auto;
     cursor: grab;
     -ms-overflow-style: none;
     scrollbar-width: none;
+    align-items: flex-start; /* top align */
 }
 .marquee-track::-webkit-scrollbar { display: none; }
 .marquee-track:active { cursor: grabbing; }
 
-.chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0.55rem 1.3rem 0.55rem 0.55rem;
-    background: rgba(255,255,255,0.04);
-    border-radius: 50px;
-    border: 1px solid var(--border);
+/* ━━ NAYA: Repurposing .chip as .poster-item ━━ */
+.marquee-track .chip {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    
+    /* Perfect vertical aspect ratio for posters */
+    width: clamp(140px, 15vw, 180px); /* Bada par not *too* bada */
+    aspect-ratio: 2 / 3; /* Movie standard */
+    
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    background: var(--surface);
+    transition: transform 0.4s var(--ease-out), box-shadow 0.4s;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border-top: 3px solid var(--orange); /* accent */
+}
+
+/* Hover effect on posters */
+.marquee-track .chip:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 15px var(--orange-dim);
+}
+
+/* Make image fill the whole poster box */
+.marquee-track .chip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* crop to fill perfectly */
+    border-radius: 0;
+    border: none;
+    transition: transform 0.6s var(--ease-out);
+}
+.marquee-track .chip:hover img { transform: scale(1.05); }
+
+/* Absolute positioned gradient overlay at the bottom for text readability */
+.marquee-track .chip::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45%; /* fade covers almost half bottom */
+    background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.6), transparent);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Adjust typography for the direct text inside the poster span */
+.marquee-track .chip {
     font-family: var(--font-body);
     font-weight: 600;
-    font-size: 1rem;
-    color: var(--cream-muted);
-    transition: all 0.3s var(--ease-out);
-    white-space: nowrap;
-    user-select: none;
+    font-size: 0.9rem;
+    color: var(--cream);
     letter-spacing: 1px;
-    cursor: none;
+    
+    /* Position text over the gradient fade, pushed to the bottom */
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 1.2rem;
+    
+    /* Make text sit above the gradient */
+    position: relative; 
+    z-index: 2; 
 }
-.chip img {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid rgba(255,255,255,0.1);
+/* Ensure direct text nodes are styled separately from the img */
+.marquee-track .chip {
+    color: var(--cream); /* already set but redundant just in case */
+    position: relative;
 }
-.chip:hover {
-    background: var(--cyan-dim);
-    border-color: var(--cyan);
-    color: var(--cyan);
-    box-shadow: 0 0 18px var(--cyan-dim);
-    transform: scale(1.06);
+
+/* Hide old horizontal gap since img fills parent */
+.marquee-track .chip img {
+    margin-right: 0;
+}
+
+/* Special styling for brands to keep logos contained */
+.marquee-track .chip.brand img {
+    object-fit: contain; /* Don't crop logos */
+    padding: 1rem; /* give space inside the poster */
+    filter: grayscale(100%) brightness(0.9);
+    transition: all 0.4s;
+}
+.marquee-track .chip.brand:hover img {
+    filter: grayscale(0%) brightness(1);
 }
 
 /* ============================================================
@@ -815,7 +906,7 @@ nav.scrolled {
     height: 160px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify(center);
     align-items: center;
     border: 1.5px dashed rgba(6, 192, 208, 0.3);
     transition: all 0.5s var(--ease-out);
