@@ -1,43 +1,44 @@
 /* ============================================================
    ESANI DEY — PREMIUM GRUNGE PORTFOLIO
-   script.js — Vanilla JS, no dependencies
+   script.js — Mobile/Tablet Optimized & Smooth (Vanilla JS)
    ============================================================ */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ── 1. CUSTOM CURSOR ──────────────────────────────────────
+    // Helper: Check if device is primarily touch based
+    const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+
+    // ── 1. CUSTOM CURSOR (GPU Accelerated) ─────────────────────
     const cursorDot  = document.getElementById('cursor-dot');
     const cursorRing = document.getElementById('cursor-ring');
 
-    if (cursorDot && cursorRing && window.innerWidth > 768) {
-        let mouseX = 0, mouseY = 0;
-        let ringX  = 0, ringY  = 0;
+    // ONLY initialize cursor logic if NOT a touch device. Massive performance boost for mobile.
+    if (cursorDot && cursorRing && !isTouchDevice && window.innerWidth > 768) {
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let ringX  = mouseX, ringY  = mouseY;
         let raf;
 
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            cursorDot.style.left = mouseX + 'px';
-            cursorDot.style.top  = mouseY + 'px';
-        });
+            cursorDot.style.transform = `translate3d(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%), 0)`;
+        }, { passive: true });
 
         const animateRing = () => {
             ringX += (mouseX - ringX) * 0.12;
             ringY += (mouseY - ringY) * 0.12;
-            cursorRing.style.left = ringX + 'px';
-            cursorRing.style.top  = ringY + 'px';
+            cursorRing.style.transform = `translate3d(calc(${ringX}px - 50%), calc(${ringY}px - 50%), 0)`;
             raf = requestAnimationFrame(animateRing);
         };
         animateRing();
 
-        // Hover effect on interactive elements
         const hoverTargets = 'a, button, .card, .reel-card, .music-card, .chip, .press-card, .social-stat';
         document.querySelectorAll(hoverTargets).forEach(el => {
             el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
             el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
         });
 
-        // Hide cursor when leaving window
         document.addEventListener('mouseleave', () => {
             cursorDot.style.opacity  = '0';
             cursorRing.style.opacity = '0';
@@ -51,21 +52,26 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── 2. NAVBAR SCROLL EFFECT + SCROLL PROGRESS BAR ────────
     const navbar = document.getElementById('navbar');
     const scrollProgress = document.getElementById('scroll-progress');
-    let lastScroll = 0;
+    
+    let ticking = false;
     const onScroll = () => {
-        const scrollY = window.scrollY;
-        if (scrollY > 60) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const scrollY = window.scrollY;
+                if (scrollY > 60) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+                if (scrollProgress) {
+                    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    const pct = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+                    scrollProgress.style.width = pct + '%';
+                }
+                ticking = false;
+            });
+            ticking = true;
         }
-        // Scroll progress bar
-        if (scrollProgress) {
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const pct = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
-            scrollProgress.style.width = pct + '%';
-        }
-        lastScroll = scrollY;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 
@@ -80,8 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     if (hamburger && mobileMenu) {
         hamburger.addEventListener('click', () => {
-            const isOpen = mobileMenu.classList.contains('open');
-            if (isOpen) {
+            if (mobileMenu.classList.contains('open')) {
                 closeMenu();
             } else {
                 hamburger.classList.add('active');
@@ -101,11 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 observer.unobserve(entry.target);
             }
         });
-    }, {
-        root: null,
-        threshold: 0.12,
-        rootMargin: "0px 0px -40px 0px"
-    });
+    }, { root: null, threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
     revealEls.forEach(el => revealObserver.observe(el));
 
     // ── 5. HERO INITIAL ANIMATIONS ────────────────────────────
@@ -117,10 +118,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── 6. PARALLAX HERO BACKGROUND ───────────────────────────
     const hero = document.querySelector('.hero');
     if (hero) {
+        let heroTicking = false;
         window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            if (scrollY < window.innerHeight) {
-                hero.style.backgroundPositionY = `calc(50% + ${scrollY * 0.35}px)`;
+            if (!heroTicking) {
+                window.requestAnimationFrame(() => {
+                    const scrollY = window.scrollY;
+                    if (scrollY < window.innerHeight) {
+                        hero.style.backgroundPositionY = `calc(50% + ${scrollY * 0.35}px)`;
+                    }
+                    heroTicking = false;
+                });
+                heroTicking = true;
             }
         }, { passive: true });
     }
@@ -159,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const original = track.innerHTML;
         track.innerHTML = original + original + original;
 
-        // Prevent all images inside track from being draggable
         track.querySelectorAll('img').forEach(img => {
             img.setAttribute('draggable', 'false');
             img.addEventListener('dragstart', e => e.preventDefault());
@@ -191,24 +198,22 @@ document.addEventListener("DOMContentLoaded", () => {
             autoScroll();
         }, 600);
 
-        track.addEventListener('mousedown', (e) => {
-            // Don't start drag on a link click
-            if (e.target.closest('a')) return;
-            isDragging = true; startX = e.pageX - track.offsetLeft; scrollLeft = exactScrollLeft; 
-            lastX = e.pageX; lastTime = performance.now(); velocity = 0; track.style.cursor = 'grabbing';
+        const onDragStart = (x) => {
+            isDragging = true; startX = x - track.offsetLeft; scrollLeft = exactScrollLeft; 
+            lastX = x; lastTime = performance.now(); velocity = 0; track.style.cursor = 'grabbing';
             cancelAnimationFrame(rafId);
-            e.preventDefault();
-        });
+        };
 
-        track.addEventListener('mousemove', (e) => {
-            if (!isDragging) return; e.preventDefault();
-            const now = performance.now(); const x = e.pageX - track.offsetLeft;
-            exactScrollLeft = scrollLeft - ((x - startX) * 1.8); clampScroll();
-            velocity = (e.pageX - lastX) / (now - lastTime + 1); lastX = e.pageX; lastTime = now;
-        });
+        const onDragMove = (x) => {
+            if (!isDragging) return;
+            const now = performance.now(); 
+            exactScrollLeft = scrollLeft - ((x - track.offsetLeft - startX) * 1.8); clampScroll();
+            velocity = (x - lastX) / (now - lastTime + 1); lastX = x; lastTime = now;
+        };
 
         const endDrag = () => {
-            if (!isDragging) return; isDragging = false; track.style.cursor = 'grab';
+            if (!isDragging) return; 
+            isDragging = false; track.style.cursor = 'grab';
             let momentum = velocity * 8;
             const decelerate = () => {
                 if (Math.abs(momentum) < 0.5) { autoScroll(); return; }
@@ -217,31 +222,28 @@ document.addEventListener("DOMContentLoaded", () => {
             decelerate();
         };
 
+        track.addEventListener('mousedown', (e) => { if(!e.target.closest('a')) { onDragStart(e.pageX); e.preventDefault(); } });
+        track.addEventListener('mousemove', (e) => onDragMove(e.pageX));
         track.addEventListener('mouseup', endDrag); track.addEventListener('mouseleave', endDrag);
-        track.addEventListener('touchstart', (e) => {
-            isDragging = true; startX = e.touches[0].pageX - track.offsetLeft; scrollLeft = exactScrollLeft; 
-            velocity = 0; lastX = e.touches[0].pageX; lastTime = performance.now(); cancelAnimationFrame(rafId);
-        }, { passive: true });
-        track.addEventListener('touchmove', (e) => {
-            if (!isDragging) return; const now = performance.now(); const x = e.touches[0].pageX - track.offsetLeft;
-            exactScrollLeft = scrollLeft - ((x - startX) * 1.6); clampScroll();
-            velocity = (e.touches[0].pageX - lastX) / (now - lastTime + 1); lastX = e.touches[0].pageX; lastTime = now;
-        }, { passive: true });
+        
+        track.addEventListener('touchstart', (e) => onDragStart(e.touches[0].pageX), { passive: true });
+        track.addEventListener('touchmove', (e) => onDragMove(e.touches[0].pageX), { passive: true });
         track.addEventListener('touchend', endDrag);
     });
 
     // ── 9. CARD 3D TILT EFFECT ────────────────────────────────
-    const tiltCards = document.querySelectorAll('.card');
-    tiltCards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left, y = e.clientY - rect.top;
-            const cx = rect.width / 2, cy = rect.height / 2;
-            const rotX = ((y - cy) / cy) * -5, rotY = ((x - cx) / cx) * 5;
-            card.style.transform = `perspective(600px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-8px)`;
+    if (!isTouchDevice) {
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left, y = e.clientY - rect.top;
+                const cx = rect.width / 2, cy = rect.height / 2;
+                const rotX = ((y - cy) / cy) * -5, rotY = ((x - cx) / cx) * 5;
+                card.style.transform = `perspective(600px) rotateX(${rotX}deg) rotateY(${rotY}deg) translate3d(0, -8px, 0)`;
+            });
+            card.addEventListener('mouseleave', () => card.style.transform = '');
         });
-        card.addEventListener('mouseleave', () => card.style.transform = '');
-    });
+    }
 
     // ── 10. CONTACT FORM ──────────────────────────────────────
     const form = document.getElementById('contactForm');
@@ -265,14 +267,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 3500);
         });
 
-        // Floating label effect for new form-field inputs
         form.querySelectorAll('.form-field input, .form-field textarea').forEach(input => {
-            input.addEventListener('focus', () => {
-                input.closest('.form-field').classList.add('focused');
-            });
-            input.addEventListener('blur', () => {
-                input.closest('.form-field').classList.remove('focused');
-            });
+            input.addEventListener('focus', () => input.closest('.form-field').classList.add('focused'));
+            input.addEventListener('blur', () => input.closest('.form-field').classList.remove('focused'));
         });
     }
 
@@ -294,37 +291,34 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── 12. PARALLAX LABEL AND HERO BG TEXT ───────────────────
     const sectionLabels = document.querySelectorAll('.section-label');
     const heroBgText = document.querySelector('.hero-bg-text');
+    let labelTicking = false;
     window.addEventListener('scroll', () => {
-        const sy = window.scrollY;
-        sectionLabels.forEach(label => {
-            const rect = label.getBoundingClientRect();
-            const offset = ((rect.top + rect.height / 2) - window.innerHeight / 2) * 0.04;
-            label.style.transform = `translateX(${offset}px)`;
-        });
-        if (heroBgText && sy < window.innerHeight) {
-            heroBgText.style.transform = `translateX(-50%) translateY(${sy * -0.18}px)`;
-            heroBgText.style.opacity = 1 - (sy / window.innerHeight) * 2;
+        if (!labelTicking) {
+            window.requestAnimationFrame(() => {
+                const sy = window.scrollY;
+                sectionLabels.forEach(label => {
+                    const rect = label.getBoundingClientRect();
+                    const offset = ((rect.top + rect.height / 2) - window.innerHeight / 2) * 0.04;
+                    label.style.transform = `translate3d(${offset}px, 0, 0)`;
+                });
+                if (heroBgText && sy < window.innerHeight) {
+                    heroBgText.style.transform = `translate3d(-50%, ${sy * -0.18}px, 0)`;
+                    heroBgText.style.opacity = 1 - (sy / window.innerHeight) * 2;
+                }
+                labelTicking = false;
+            });
+            labelTicking = true;
         }
     }, { passive: true });
     
-// ── 13. VIDEO / REEL CLICK LOGIC ──────────────────────────
-    // Instagram blocks iframe embedding of Reels on third-party sites.
-    // We detect whether a link is a Reel (or any non-embeddable URL) and
-    // open it in a new tab. Only classic /p/ posts get the modal iframe.
+    // ── 13. VIDEO / REEL CLICK LOGIC ──────────────────────────
     const modalOverlay = document.getElementById('video-modal');
     const modalIframe  = document.getElementById('modal-iframe');
     const closeModalBtn = document.getElementById('close-modal');
     const customThumbs  = document.querySelectorAll('.reel-card.custom-thumb');
 
-    const isInstagramReel = (url) => {
-        // Matches /reel/ or /reels/ paths — these cannot be iframed
-        return /instagram\.com\/(reel|reels)\//i.test(url);
-    };
-
-    const toInstagramPostUrl = (embedUrl) => {
-        // Convert /embed suffix back to a clean Instagram URL for new-tab opening
-        return embedUrl.replace(/\/embed\/?$/, '/');
-    };
+    const isInstagramReel = (url) => /instagram\.com\/(reel|reels)\//i.test(url);
+    const toInstagramPostUrl = (embedUrl) => embedUrl.replace(/\/embed\/?$/, '/');
 
     if (customThumbs.length > 0) {
         customThumbs.forEach(card => {
@@ -334,10 +328,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!videoUrl) return;
 
                 if (isInstagramReel(videoUrl)) {
-                    // Reels can't be embedded — open directly on Instagram
                     window.open(toInstagramPostUrl(videoUrl), '_blank', 'noopener,noreferrer');
                 } else if (modalOverlay && modalIframe) {
-                    // Classic /p/ posts support the embed iframe
                     modalIframe.src = videoUrl;
                     modalOverlay.classList.add('active');
                     document.body.style.overflow = 'hidden';
@@ -359,6 +351,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     }
+
     // ── FILMS CINEMATIC CAROUSEL ─────────────────────────────
     function initFilmsCarousel(stageId, prevBtnSelector, nextBtnSelector, titleId, dotsId) {
         const stage = document.getElementById(stageId);
@@ -370,7 +363,6 @@ document.addEventListener("DOMContentLoaded", () => {
         let current = 0;
         const total = cards.length;
 
-        // Build dots
         if (dotsContainer) {
             cards.forEach((_, i) => {
                 const dot = document.createElement('span');
@@ -383,17 +375,13 @@ document.addEventListener("DOMContentLoaded", () => {
         function updatePositions() {
             cards.forEach((card, i) => {
                 let pos = i - current;
-                // Wrap for circular feel (clamp to ±7)
                 if (pos > total / 2) pos -= total;
                 if (pos < -total / 2) pos += total;
                 card.setAttribute('data-pos', pos);
             });
-            // Update title
             if (titleDisplay) {
-                const title = cards[current].querySelector('.fc-card-title').textContent;
-                titleDisplay.textContent = title;
+                titleDisplay.textContent = cards[current].querySelector('.fc-card-title').textContent;
             }
-            // Update dots
             if (dotsContainer) {
                 dotsContainer.querySelectorAll('.fc-dot').forEach((d, i) => {
                     d.classList.toggle('active', i === current);
@@ -406,21 +394,16 @@ document.addEventListener("DOMContentLoaded", () => {
             updatePositions();
         }
 
-        // Button queries scoped to parent section
         const section = stage.closest('.films-carousel-section');
         if (section) {
             section.querySelector('.fc-btn-prev').addEventListener('click', () => goTo(current - 1));
             section.querySelector('.fc-btn-next').addEventListener('click', () => goTo(current + 1));
         }
 
-        // Click on non-active card → advance to it
         cards.forEach((card, i) => {
-            card.addEventListener('click', () => {
-                if (i !== current) goTo(i);
-            });
+            card.addEventListener('click', () => { if (i !== current) goTo(i); });
         });
 
-        // Touch / swipe support
         let touchStartX = 0;
         stage.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
         stage.addEventListener('touchend', e => {
@@ -428,7 +411,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
         });
 
-        // Keyboard support when hovering
         section && section.addEventListener('keydown', e => {
             if (e.key === 'ArrowLeft') goTo(current - 1);
             if (e.key === 'ArrowRight') goTo(current + 1);
@@ -443,104 +425,149 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── 14. IMAGE EXPANSION MODAL (PRESS SECTION) ─────────────
     const imageModal = document.getElementById('image-modal');
     const modalImage = document.getElementById('modal-image');
-    
-    // Select the press cards that have images (excluding the online links)
     const pressCards = document.querySelectorAll('.press-card:not(.press-link-card)');
-
-    // DEBUG: Open your browser console (F12) to see if this prints "Found press cards: 7"
-    console.log("Found press cards:", pressCards.length); 
 
     if (imageModal && modalImage) {
         pressCards.forEach(card => {
             card.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log("Press card clicked!"); // DEBUG: Check if clicks are registering
-                
                 const imgElement = card.querySelector('.press-img');
                 if (imgElement && imgElement.src) {
                     modalImage.src = imgElement.src;
                     imageModal.classList.add('active');
                     document.body.style.overflow = 'hidden'; 
-                } else {
-                    console.error("Could not find the image inside this card.");
                 }
             });
         });
 
-        // Close logic handles clicking the 'X' or the dark background
         imageModal.addEventListener('click', (e) => {
             if (e.target === imageModal || e.target.closest('#close-image-modal')) {
                 imageModal.classList.remove('active');
                 document.body.style.overflow = '';
-                setTimeout(() => { modalImage.src = ''; }, 400); // Clear image after fade
+                setTimeout(() => { modalImage.src = ''; }, 400); 
             }
         });
-    } else {
-        console.error("Image Modal HTML is missing! Check index.html.");
     }
 
-    // ── 15. REEL CAROUSELS WITH NAV BUTTONS ──────────────────
+    // ── 15. REEL CAROUSELS — INFINITE AUTO-SCROLL (GPU) ───────
     function initReelCarousel(trackId, dotsId) {
         const track = document.getElementById(trackId);
-        const dotsEl = document.getElementById(dotsId);
         if (!track) return;
 
-        const cards = Array.from(track.querySelectorAll('.reel-card'));
-        const total = cards.length;
-        if (total === 0) return;
+        const originalCards = Array.from(track.querySelectorAll('.reel-card'));
+        if (originalCards.length === 0) return;
 
-        let currentIdx = 0;
-        const cardWidth = () => cards[0].offsetWidth + 24; // gap = 1.5rem ≈ 24px
+        const clone1 = originalCards.map(c => c.cloneNode(true));
+        const clone2 = originalCards.map(c => c.cloneNode(true));
+        clone1.forEach(c => track.appendChild(c));
+        clone2.forEach(c => track.appendChild(c));
 
-        // Build dot indicators
-        if (dotsEl) {
-            cards.forEach((_, i) => {
-                const d = document.createElement('span');
-                d.className = 'reel-dot' + (i === 0 ? ' active' : '');
-                d.addEventListener('click', () => scrollTo(i));
-                dotsEl.appendChild(d);
+        track.querySelectorAll('.reel-card.custom-thumb').forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                const videoUrl = card.getAttribute('data-video');
+                if (!videoUrl) return;
+                const modalOverlay = document.getElementById('video-modal');
+                const modalIframe  = document.getElementById('modal-iframe');
+                const isReel = /instagram\.com\/(reel|reels)\//i.test(videoUrl);
+                if (isReel) {
+                    window.open(videoUrl.replace(/\/embed\/?$/, '/'), '_blank', 'noopener,noreferrer');
+                } else if (modalOverlay && modalIframe) {
+                    modalIframe.src = videoUrl;
+                    modalOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    window.open(videoUrl.replace(/\/embed\/?$/, '/'), '_blank', 'noopener,noreferrer');
+                }
             });
-        }
+        });
 
-        function updateDots(idx) {
-            if (!dotsEl) return;
-            dotsEl.querySelectorAll('.reel-dot').forEach((d, i) => {
-                d.classList.toggle('active', i === idx);
-            });
-        }
+        const GAP = 24; 
+        const cardW = () => originalCards[0].offsetWidth + GAP;
+        const loopLen = () => originalCards.length * cardW();
 
-        function scrollTo(idx) {
-            idx = Math.max(0, Math.min(idx, total - 1));
-            currentIdx = idx;
-            track.scrollTo({ left: cardWidth() * idx, behavior: 'smooth' });
-            updateDots(idx);
-        }
+        let pos = 0;
+        let speed = 0.6;
+        let isDragging = false;
+        let dragStartX = 0, dragStartPos = 0, lastDragX = 0, velocity = 0;
+        let rafId;
+        let paused = false;
 
-        // Update active dot on native scroll
-        let scrollTimer;
-        track.addEventListener('scroll', () => {
-            clearTimeout(scrollTimer);
-            scrollTimer = setTimeout(() => {
-                const idx = Math.round(track.scrollLeft / cardWidth());
-                currentIdx = Math.max(0, Math.min(idx, total - 1));
-                updateDots(currentIdx);
-            }, 80);
-        }, { passive: true });
+        const setInitial = () => {
+            pos = loopLen();
+            track.style.transform = `translate3d(${-pos}px, 0, 0)`;
+        };
+        setInitial();
 
-        // Nav button wiring — find buttons by data-track attribute
+        const clamp = () => {
+            const len = loopLen();
+            if (pos >= len * 2) pos -= len;
+            if (pos < 0)        pos += len;
+        };
+
+        const tick = () => {
+            if (!isDragging && !paused) {
+                pos += speed;
+                clamp();
+                track.style.transform = `translate3d(${-pos}px, 0, 0)`;
+            }
+            rafId = requestAnimationFrame(tick);
+        };
+        tick();
+
+        track.style.display = 'flex';
+        track.style.willChange = 'transform';
+        track.style.gap = `${GAP}px`;
+
         document.querySelectorAll(`.reel-btn[data-track="${trackId}"]`).forEach(btn => {
             btn.addEventListener('click', () => {
                 const dir = parseInt(btn.getAttribute('data-dir'), 10);
-                scrollTo(currentIdx + dir);
+                pos += dir * cardW() * 3;
+                clamp();
             });
         });
 
-        // Touch swipe support
-        let tStart = 0;
-        track.addEventListener('touchstart', e => { tStart = e.touches[0].clientX; }, { passive: true });
-        track.addEventListener('touchend', e => {
-            const diff = tStart - e.changedTouches[0].clientX;
-            if (Math.abs(diff) > 40) scrollTo(currentIdx + (diff > 0 ? 1 : -1));
+        const onDown = (x) => {
+            isDragging = true;
+            dragStartX = x; dragStartPos = pos; lastDragX = x; velocity = 0;
+            track.style.cursor = 'grabbing';
+        };
+        const onMove = (x) => {
+            if (!isDragging) return;
+            const delta = dragStartX - x;
+            pos = dragStartPos + delta;
+            velocity = x - lastDragX; lastDragX = x;
+            clamp();
+            track.style.transform = `translate3d(${-pos}px, 0, 0)`;
+        };
+        const onUp = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            track.style.cursor = 'grab';
+            let v = -velocity * 1.5;
+            const decel = () => {
+                if (Math.abs(v) < 0.3) return;
+                pos += v; v *= 0.93; clamp();
+                track.style.transform = `translate3d(${-pos}px, 0, 0)`;
+                requestAnimationFrame(decel);
+            };
+            decel();
+        };
+
+        track.addEventListener('mousedown', e => { if (!e.target.closest('a')) { onDown(e.clientX); e.preventDefault(); } });
+        window.addEventListener('mousemove', e => onMove(e.clientX));
+        window.addEventListener('mouseup', onUp);
+
+        track.addEventListener('touchstart', e => onDown(e.touches[0].clientX), { passive: true });
+        track.addEventListener('touchmove',  e => onMove(e.touches[0].clientX), { passive: true });
+        track.addEventListener('touchend',   onUp);
+
+        track.addEventListener('mouseenter', () => { paused = true; });
+        track.addEventListener('mouseleave', () => { paused = false; });
+
+        window.addEventListener('resize', () => {
+            pos = loopLen();
+            track.style.transform = `translate3d(${-pos}px, 0, 0)`;
         });
     }
 
@@ -549,13 +576,14 @@ document.addEventListener("DOMContentLoaded", () => {
     initReelCarousel('actingTrack',   'actingDots');
     initReelCarousel('trendingTrack', 'trendingDots');
 
-    // ── 16. CARD MAGNETIC GLOW (mouse position CSS vars) ─────
-    document.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--mouse-x', ((e.clientX - rect.left) / rect.width * 100) + '%');
-            card.style.setProperty('--mouse-y', ((e.clientY - rect.top) / rect.height * 100) + '%');
+    // ── 16. CARD MAGNETIC GLOW ───────────────────────────────
+    if (!isTouchDevice) {
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mouse-x', ((e.clientX - rect.left) / rect.width * 100) + '%');
+                card.style.setProperty('--mouse-y', ((e.clientY - rect.top) / rect.height * 100) + '%');
+            });
         });
-    });
-
-}); // <-- THIS IS THE END OF YOUR DOMContentLoaded BLOCK. Do not delete this!
+    }
+});
