@@ -48,8 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ── 2. NAVBAR SCROLL EFFECT ───────────────────────────────
+    // ── 2. NAVBAR SCROLL EFFECT + SCROLL PROGRESS BAR ────────
     const navbar = document.getElementById('navbar');
+    const scrollProgress = document.getElementById('scroll-progress');
     let lastScroll = 0;
     const onScroll = () => {
         const scrollY = window.scrollY;
@@ -57,6 +58,12 @@ document.addEventListener("DOMContentLoaded", () => {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
+        }
+        // Scroll progress bar
+        if (scrollProgress) {
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const pct = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+            scrollProgress.style.width = pct + '%';
         }
         lastScroll = scrollY;
     };
@@ -152,6 +159,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const original = track.innerHTML;
         track.innerHTML = original + original + original;
 
+        // Prevent all images inside track from being draggable
+        track.querySelectorAll('img').forEach(img => {
+            img.setAttribute('draggable', 'false');
+            img.addEventListener('dragstart', e => e.preventDefault());
+            img.addEventListener('mousedown', e => e.preventDefault());
+        });
+
         let isDragging = false;
         let startX, scrollLeft, rafId, velocity = 0, lastX, lastTime, exactScrollLeft = 0; 
         const speed = parseFloat(track.getAttribute('data-speed')) || 1;
@@ -178,9 +192,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 600);
 
         track.addEventListener('mousedown', (e) => {
+            // Don't start drag on a link click
+            if (e.target.closest('a')) return;
             isDragging = true; startX = e.pageX - track.offsetLeft; scrollLeft = exactScrollLeft; 
             lastX = e.pageX; lastTime = performance.now(); velocity = 0; track.style.cursor = 'grabbing';
             cancelAnimationFrame(rafId);
+            e.preventDefault();
         });
 
         track.addEventListener('mousemove', (e) => {
@@ -246,6 +263,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 btn.disabled = false; btn.style.background = ''; btn.style.color = '';
                 btn.style.boxShadow = ''; form.reset();
             }, 3500);
+        });
+
+        // Floating label effect for new form-field inputs
+        form.querySelectorAll('.form-field input, .form-field textarea').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.closest('.form-field').classList.add('focused');
+            });
+            input.addEventListener('blur', () => {
+                input.closest('.form-field').classList.remove('focused');
+            });
         });
     }
 
@@ -451,5 +478,84 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.error("Image Modal HTML is missing! Check index.html.");
     }
+
+    // ── 15. REEL CAROUSELS WITH NAV BUTTONS ──────────────────
+    function initReelCarousel(trackId, dotsId) {
+        const track = document.getElementById(trackId);
+        const dotsEl = document.getElementById(dotsId);
+        if (!track) return;
+
+        const cards = Array.from(track.querySelectorAll('.reel-card'));
+        const total = cards.length;
+        if (total === 0) return;
+
+        let currentIdx = 0;
+        const cardWidth = () => cards[0].offsetWidth + 24; // gap = 1.5rem ≈ 24px
+
+        // Build dot indicators
+        if (dotsEl) {
+            cards.forEach((_, i) => {
+                const d = document.createElement('span');
+                d.className = 'reel-dot' + (i === 0 ? ' active' : '');
+                d.addEventListener('click', () => scrollTo(i));
+                dotsEl.appendChild(d);
+            });
+        }
+
+        function updateDots(idx) {
+            if (!dotsEl) return;
+            dotsEl.querySelectorAll('.reel-dot').forEach((d, i) => {
+                d.classList.toggle('active', i === idx);
+            });
+        }
+
+        function scrollTo(idx) {
+            idx = Math.max(0, Math.min(idx, total - 1));
+            currentIdx = idx;
+            track.scrollTo({ left: cardWidth() * idx, behavior: 'smooth' });
+            updateDots(idx);
+        }
+
+        // Update active dot on native scroll
+        let scrollTimer;
+        track.addEventListener('scroll', () => {
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(() => {
+                const idx = Math.round(track.scrollLeft / cardWidth());
+                currentIdx = Math.max(0, Math.min(idx, total - 1));
+                updateDots(currentIdx);
+            }, 80);
+        }, { passive: true });
+
+        // Nav button wiring — find buttons by data-track attribute
+        document.querySelectorAll(`.reel-btn[data-track="${trackId}"]`).forEach(btn => {
+            btn.addEventListener('click', () => {
+                const dir = parseInt(btn.getAttribute('data-dir'), 10);
+                scrollTo(currentIdx + dir);
+            });
+        });
+
+        // Touch swipe support
+        let tStart = 0;
+        track.addEventListener('touchstart', e => { tStart = e.touches[0].clientX; }, { passive: true });
+        track.addEventListener('touchend', e => {
+            const diff = tStart - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) scrollTo(currentIdx + (diff > 0 ? 1 : -1));
+        });
+    }
+
+    initReelCarousel('liveTrack',     'liveDots');
+    initReelCarousel('tvTrack',       'tvDots');
+    initReelCarousel('actingTrack',   'actingDots');
+    initReelCarousel('trendingTrack', 'trendingDots');
+
+    // ── 16. CARD MAGNETIC GLOW (mouse position CSS vars) ─────
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', ((e.clientX - rect.left) / rect.width * 100) + '%');
+            card.style.setProperty('--mouse-y', ((e.clientY - rect.top) / rect.height * 100) + '%');
+        });
+    });
 
 }); // <-- THIS IS THE END OF YOUR DOMContentLoaded BLOCK. Do not delete this!

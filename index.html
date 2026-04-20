@@ -9,6 +9,7 @@
 </head>
 <body>
 
+    <div id="scroll-progress"></div>
     <div id="cursor-dot"></div>
     <div id="cursor-ring"></div>
 
@@ -438,49 +439,56 @@
             </p>
             
             <div class="reel-category reveal-up" data-delay="0">
-                <div class="reel-track">
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DSzqUz6DLI-/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776696835/GramFetchr_Thumbnail_67257409_ojokse.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                <div class="reel-carousel-wrapper" id="liveWrapper">
+                    <div class="reel-track" id="liveTrack">
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DSzqUz6DLI-/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776696835/GramFetchr_Thumbnail_67257409_ojokse.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Live at Bastian</p></div>
                         </div>
-                        <div class="reel-info"><p>Live at Bastian</p></div>
-                    </div>
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DS-HvJTjITr/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776697618/GramFetchr_Thumbnail_77255983_x92kle.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DS-HvJTjITr/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776697618/GramFetchr_Thumbnail_77255983_x92kle.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Live at Bastian</p></div>
                         </div>
-                        <div class="reel-info"><p>Live at Bastian</p></div>
-                    </div>
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DHy3VYrzhU-/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776697675/GramFetchr_Thumbnail_25258256_udeazp.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DHy3VYrzhU-/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776697675/GramFetchr_Thumbnail_25258256_udeazp.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Live with Mika Singh</p></div>
                         </div>
-                        <div class="reel-info"><p>Live with Mika Singh</p></div>
-                    </div>
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/C5tXa62NOKH/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776697726/GramFetchr_Thumbnail_41230092_prnnjv.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/C5tXa62NOKH/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776697726/GramFetchr_Thumbnail_41230092_prnnjv.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Live Concert Solo</p></div>
                         </div>
-                        <div class="reel-info"><p>Live Concert Solo</p></div>
-                    </div>
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DPyYRB1CIXv/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776697828/GramFetchr_Thumbnail_83538117_hmtkho.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DPyYRB1CIXv/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776697828/GramFetchr_Thumbnail_83538117_hmtkho.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Navratri Festival – 30,000+ Audience</p></div>
                         </div>
-                        <div class="reel-info"><p>Navratri Festival – 30,000+ Audience</p></div>
-                    </div>
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DLmkms7MxdW/embed">
-                        <div class="reel-thumb" style="background: url('YOUR_CLOUDINARY_THUMB_10') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DLmkms7MxdW/embed">
+                            <div class="reel-thumb" style="background: url('YOUR_CLOUDINARY_THUMB_10') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Palm Expo – Sound & Light Festival</p></div>
                         </div>
-                        <div class="reel-info"><p>Palm Expo – Sound & Light Festival</p></div>
-                    </div>
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DKUPzkEMfSa/embed">
-                        <div class="reel-thumb" style="background: url('YOUR_CLOUDINARY_THUMB_11') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DKUPzkEMfSa/embed">
+                            <div class="reel-thumb" style="background: url('YOUR_CLOUDINARY_THUMB_11') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Additional Live Clip</p></div>
                         </div>
-                        <div class="reel-info"><p>Additional Live Clip</p></div>
                     </div>
+                </div>
+                <div class="reel-nav">
+                    <button class="reel-btn" data-track="liveTrack" data-dir="-1" aria-label="Previous">&#8249;</button>
+                    <div class="reel-dots" id="liveDots"></div>
+                    <button class="reel-btn" data-track="liveTrack" data-dir="1" aria-label="Next">&#8250;</button>
                 </div>
             </div>
         </div>
@@ -494,25 +502,32 @@
                 Beyond the stage, Esani has made notable appearances on national television, including featuring on the iconic Kaun Banega Crorepati (KBC) alongside Amitabh Bachchan, and playing for massive televised events.
             </p>
             <div class="reel-category reveal-up">
-                <div class="reel-track">
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/CiDOlFqJr-6/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776698622/GramFetchr_Thumbnail_81665447_jgplb4.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                <div class="reel-carousel-wrapper" id="tvWrapper">
+                    <div class="reel-track" id="tvTrack">
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/CiDOlFqJr-6/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776698622/GramFetchr_Thumbnail_81665447_jgplb4.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>SAAM TV Marathi Performance</p></div>
                         </div>
-                        <div class="reel-info"><p>SAAM TV Marathi Performance</p></div>
-                    </div>
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/CgweiPcONr8/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776698687/GramFetchr_Thumbnail_18347333_dmxdtg.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/CgweiPcONr8/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776698687/GramFetchr_Thumbnail_18347333_dmxdtg.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Sur Nava Dhyas Nava (TV Show)</p></div>
                         </div>
-                        <div class="reel-info"><p>Sur Nava Dhyas Nava (TV Show)</p></div>
-                    </div>
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DHp7za0PwZX/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776697889/GramFetchr_Thumbnail_20904676_rawmjc.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DHp7za0PwZX/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776697889/GramFetchr_Thumbnail_20904676_rawmjc.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Lakshya – Official Music Video</p></div>
                         </div>
-                        <div class="reel-info"><p>Lakshya – Official Music Video</p></div>
                     </div>
+                </div>
+                <div class="reel-nav">
+                    <button class="reel-btn" data-track="tvTrack" data-dir="-1" aria-label="Previous">&#8249;</button>
+                    <div class="reel-dots" id="tvDots"></div>
+                    <button class="reel-btn" data-track="tvTrack" data-dir="1" aria-label="Next">&#8250;</button>
                 </div>
             </div>
         </div>
@@ -526,13 +541,20 @@
                 Exploring her talent on screen, Esani has acted in films like Tu Ya Main, Qaidi Band, short films with Subhash Ghai, and an upcoming unreleased short film planned for international festivals. She has also appeared in ad campaigns for Ching’s (w/ Sridevi, Neena Gupta, Anushka Sharma) and Cox & Kings.
             </p>
             <div class="reel-category reveal-up">
-                <div class="reel-track">
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DShNGDgjET-/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776699011/GramFetchr_Thumbnail_24068821_c9skav.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                <div class="reel-carousel-wrapper" id="actingWrapper">
+                    <div class="reel-track" id="actingTrack">
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DShNGDgjET-/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776699011/GramFetchr_Thumbnail_24068821_c9skav.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Ad Film Performance</p></div>
                         </div>
-                        <div class="reel-info"><p>Ad Film Performance</p></div>
                     </div>
+                </div>
+                <div class="reel-nav">
+                    <button class="reel-btn" data-track="actingTrack" data-dir="-1" aria-label="Previous">&#8249;</button>
+                    <div class="reel-dots" id="actingDots"></div>
+                    <button class="reel-btn" data-track="actingTrack" data-dir="1" aria-label="Next">&#8250;</button>
                 </div>
             </div>
         </div>
@@ -563,31 +585,38 @@
 
             <div class="reel-category reveal-up" data-delay="1">
                 <h3>Trending Videos</h3>
-                <div class="reel-track">
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reels/DJ1dd8HMa2m/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776720130/GramFetchr_Thumbnail_91940001_bgarbr.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                <div class="reel-carousel-wrapper" id="trendingWrapper">
+                    <div class="reel-track" id="trendingTrack">
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reels/DJ1dd8HMa2m/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776720130/GramFetchr_Thumbnail_91940001_bgarbr.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Trending Solo 1</p></div>
                         </div>
-                        <div class="reel-info"><p>Trending Solo 1</p></div>
-                    </div>
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DRUmi9nDFW8/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776720218/GramFetchr_Thumbnail_96091360_gvyrjx.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DRUmi9nDFW8/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776720218/GramFetchr_Thumbnail_96091360_gvyrjx.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Trending Solo 2</p></div>
                         </div>
-                        <div class="reel-info"><p>Trending Solo 2</p></div>
-                    </div>
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DQT6cqGjIdj/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776720275/GramFetchr_Thumbnail_20594900_y1vxzk.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/DQT6cqGjIdj/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776720275/GramFetchr_Thumbnail_20594900_y1vxzk.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Trending Solo 3</p></div>
                         </div>
-                        <div class="reel-info"><p>Trending Solo 3</p></div>
-                    </div>
-                    <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/C-QT_qNiRh/embed">
-                        <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776697726/GramFetchr_Thumbnail_41230092_prnnjv.jpg') center/cover no-repeat;">
-                            <div class="play-btn-ig">▶</div>
+                        <div class="reel-card custom-thumb" data-video="https://www.instagram.com/reel/C-QT_qNiRh/embed">
+                            <div class="reel-thumb" style="background: url('https://res.cloudinary.com/da0wl7kqm/image/upload/v1776697726/GramFetchr_Thumbnail_41230092_prnnjv.jpg') center/cover no-repeat;">
+                                <div class="play-btn-ig">▶</div>
+                            </div>
+                            <div class="reel-info"><p>Trending Solo 4</p></div>
                         </div>
-                        <div class="reel-info"><p>Trending Solo 4</p></div>
                     </div>
+                </div>
+                <div class="reel-nav">
+                    <button class="reel-btn" data-track="trendingTrack" data-dir="-1" aria-label="Previous">&#8249;</button>
+                    <div class="reel-dots" id="trendingDots"></div>
+                    <button class="reel-btn" data-track="trendingTrack" data-dir="1" aria-label="Next">&#8250;</button>
                 </div>
             </div>
         </div>
@@ -754,22 +783,35 @@
                 </div>
                 <div class="contact-box reveal-right">
                     <form id="contactForm" novalidate>
-                        <div class="form-group">
-                            <input type="text" id="name" placeholder=" " required>
-                            <label for="name">Your Name</label>
+                        <div class="contact-form-grid">
+                            <div class="form-field">
+                                <label for="name">Your Name</label>
+                                <input type="text" id="name" placeholder="Riya Sharma" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" placeholder="hello@brand.com" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="phone">Phone / WhatsApp</label>
+                                <input type="tel" id="phone" placeholder="+91 98765 43210">
+                            </div>
+                            <div class="form-field">
+                                <label for="event">Event Type</label>
+                                <input type="text" id="event" placeholder="Concert / Brand Deal / Film">
+                            </div>
+                            <div class="form-field full-width">
+                                <label for="message">Your Message</label>
+                                <textarea id="message" placeholder="Tell me about your project, dates, and vision..." rows="4" required></textarea>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <input type="email" id="email" placeholder=" " required>
-                            <label for="email">Your Email</label>
+                        <div class="form-submit-row">
+                            <button type="submit" class="btn btn-primary">
+                                <span class="btn-text">Send Message</span>
+                                <span class="btn-arrow">→</span>
+                            </button>
+                            <p class="form-note">Response within <span>24 hours</span> guaranteed.</p>
                         </div>
-                        <div class="form-group">
-                            <textarea id="message" placeholder=" " rows="5" required></textarea>
-                            <label for="message">Your Message</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="width:100%">
-                            <span class="btn-text">Send Message</span>
-                            <span class="btn-arrow">→</span>
-                        </button>
                     </form>
                 </div>
             </div>
@@ -777,19 +819,15 @@
     </section>
 
     <footer>
-        <div class="footer-bg-text" aria-hidden="true">ESANI</div>
-        <div class="container">
-            <div class="footer-top">
-                <h2 class="footer-logo">ESANI<span>DEY</span></h2>
-                <p class="footer-tagline">India's Youngest Female Guitarist</p>
-            </div>
+        <div class="footer-inner">
+            <h2 class="footer-logo">ESANI<span>DEY</span></h2>
             <div class="footer-links">
                 <a href="#films">Films</a>
-                <a href="#live-shows">Watch Live</a>
+                <a href="#live-shows">Live</a>
                 <a href="#collaborations">Collabs</a>
                 <a href="#press">Press</a>
+                <a href="#contact">Contact</a>
             </div>
-            <div class="footer-divider"></div>
             <p class="footer-copy">© 2026 Esani Dey. All Rights Reserved.</p>
         </div>
     </footer>
