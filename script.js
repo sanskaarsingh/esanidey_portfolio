@@ -279,5 +279,177 @@ document.addEventListener("DOMContentLoaded", () => {
             heroBgText.style.opacity = 1 - (sy / window.innerHeight) * 2;
         }
     }, { passive: true });
+    
+// ── 13. VIDEO / REEL CLICK LOGIC ──────────────────────────
+    // Instagram blocks iframe embedding of Reels on third-party sites.
+    // We detect whether a link is a Reel (or any non-embeddable URL) and
+    // open it in a new tab. Only classic /p/ posts get the modal iframe.
+    const modalOverlay = document.getElementById('video-modal');
+    const modalIframe  = document.getElementById('modal-iframe');
+    const closeModalBtn = document.getElementById('close-modal');
+    const customThumbs  = document.querySelectorAll('.reel-card.custom-thumb');
 
-});
+    const isInstagramReel = (url) => {
+        // Matches /reel/ or /reels/ paths — these cannot be iframed
+        return /instagram\.com\/(reel|reels)\//i.test(url);
+    };
+
+    const toInstagramPostUrl = (embedUrl) => {
+        // Convert /embed suffix back to a clean Instagram URL for new-tab opening
+        return embedUrl.replace(/\/embed\/?$/, '/');
+    };
+
+    if (customThumbs.length > 0) {
+        customThumbs.forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                const videoUrl = card.getAttribute('data-video');
+                if (!videoUrl) return;
+
+                if (isInstagramReel(videoUrl)) {
+                    // Reels can't be embedded — open directly on Instagram
+                    window.open(toInstagramPostUrl(videoUrl), '_blank', 'noopener,noreferrer');
+                } else if (modalOverlay && modalIframe) {
+                    // Classic /p/ posts support the embed iframe
+                    modalIframe.src = videoUrl;
+                    modalOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    window.open(toInstagramPostUrl(videoUrl), '_blank', 'noopener,noreferrer');
+                }
+            });
+        });
+
+        if (modalOverlay && closeModalBtn) {
+            const closeModal = () => {
+                modalOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+                setTimeout(() => { modalIframe.src = ''; }, 400);
+            };
+            closeModalBtn.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) closeModal();
+            });
+        }
+    }
+    // ── FILMS CINEMATIC CAROUSEL ─────────────────────────────
+    function initFilmsCarousel(stageId, prevBtnSelector, nextBtnSelector, titleId, dotsId) {
+        const stage = document.getElementById(stageId);
+        if (!stage) return;
+
+        const cards = Array.from(stage.querySelectorAll('.fc-card'));
+        const titleDisplay = document.getElementById(titleId);
+        const dotsContainer = document.getElementById(dotsId);
+        let current = 0;
+        const total = cards.length;
+
+        // Build dots
+        if (dotsContainer) {
+            cards.forEach((_, i) => {
+                const dot = document.createElement('span');
+                dot.className = 'fc-dot' + (i === 0 ? ' active' : '');
+                dot.addEventListener('click', () => goTo(i));
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function updatePositions() {
+            cards.forEach((card, i) => {
+                let pos = i - current;
+                // Wrap for circular feel (clamp to ±7)
+                if (pos > total / 2) pos -= total;
+                if (pos < -total / 2) pos += total;
+                card.setAttribute('data-pos', pos);
+            });
+            // Update title
+            if (titleDisplay) {
+                const title = cards[current].querySelector('.fc-card-title').textContent;
+                titleDisplay.textContent = title;
+            }
+            // Update dots
+            if (dotsContainer) {
+                dotsContainer.querySelectorAll('.fc-dot').forEach((d, i) => {
+                    d.classList.toggle('active', i === current);
+                });
+            }
+        }
+
+        function goTo(idx) {
+            current = ((idx % total) + total) % total;
+            updatePositions();
+        }
+
+        // Button queries scoped to parent section
+        const section = stage.closest('.films-carousel-section');
+        if (section) {
+            section.querySelector('.fc-btn-prev').addEventListener('click', () => goTo(current - 1));
+            section.querySelector('.fc-btn-next').addEventListener('click', () => goTo(current + 1));
+        }
+
+        // Click on non-active card → advance to it
+        cards.forEach((card, i) => {
+            card.addEventListener('click', () => {
+                if (i !== current) goTo(i);
+            });
+        });
+
+        // Touch / swipe support
+        let touchStartX = 0;
+        stage.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+        stage.addEventListener('touchend', e => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
+        });
+
+        // Keyboard support when hovering
+        section && section.addEventListener('keydown', e => {
+            if (e.key === 'ArrowLeft') goTo(current - 1);
+            if (e.key === 'ArrowRight') goTo(current + 1);
+        });
+
+        updatePositions();
+    }
+
+    initFilmsCarousel('filmsCarousel', '.fc-btn-prev', '.fc-btn-next', 'fcTitleDisplay', 'fcDots');
+    initFilmsCarousel('webSeriesCarousel', '.fc-btn-prev', '.fc-btn-next', 'wsTitleDisplay', 'wsDots');
+
+    // ── 14. IMAGE EXPANSION MODAL (PRESS SECTION) ─────────────
+    const imageModal = document.getElementById('image-modal');
+    const modalImage = document.getElementById('modal-image');
+    
+    // Select the press cards that have images (excluding the online links)
+    const pressCards = document.querySelectorAll('.press-card:not(.press-link-card)');
+
+    // DEBUG: Open your browser console (F12) to see if this prints "Found press cards: 7"
+    console.log("Found press cards:", pressCards.length); 
+
+    if (imageModal && modalImage) {
+        pressCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log("Press card clicked!"); // DEBUG: Check if clicks are registering
+                
+                const imgElement = card.querySelector('.press-img');
+                if (imgElement && imgElement.src) {
+                    modalImage.src = imgElement.src;
+                    imageModal.classList.add('active');
+                    document.body.style.overflow = 'hidden'; 
+                } else {
+                    console.error("Could not find the image inside this card.");
+                }
+            });
+        });
+
+        // Close logic handles clicking the 'X' or the dark background
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal || e.target.closest('#close-image-modal')) {
+                imageModal.classList.remove('active');
+                document.body.style.overflow = '';
+                setTimeout(() => { modalImage.src = ''; }, 400); // Clear image after fade
+            }
+        });
+    } else {
+        console.error("Image Modal HTML is missing! Check index.html.");
+    }
+
+}); // <-- THIS IS THE END OF YOUR DOMContentLoaded BLOCK. Do not delete this!
